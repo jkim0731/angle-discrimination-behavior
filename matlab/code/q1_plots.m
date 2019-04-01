@@ -5,7 +5,7 @@ mdlName = {'mdlExpertTTypeRadialD','mdlExpertTTypeTouchTheta','mdlExpertTTypeDKa
 mcc = nan(length(mdlName),6); 
 numVars = nan(1,length(mdlName)); 
 for p = 1:length(mdlName)
-    load(['Y:\Whiskernas\JK\Data analysis\Jon\' mdlName{p}])
+    load(['C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastructs\' mdlName{p}])
     numVars(p) = size(groupMdl{1}.io.X,2);
     for k = 1:length(groupMdl)
         mcc(p,k) = nanmean(groupMdl{k}.gof.mcc);
@@ -24,7 +24,7 @@ title('2 angle ttype prediction')
 %% Feature plotting
 
 mdlName = 'mdlNaiveTType';
-load(['Y:\Whiskernas\JK\Data analysis\Jon\' mdlName])
+load(['C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastructs\' mdlName])
 
 for b = 1:length(groupMdl)
 [wt,idx] = sort(abs(mean(groupMdl{b}.fitCoeffs(2:end,:),2)));

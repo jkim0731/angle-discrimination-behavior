@@ -3,20 +3,20 @@ clear
 
 mns = [{'JK025'},{'JK027'},{'JK030'},{'JK036'},{'JK039'},{'JK052'}];
 % sns = [{'S05'},{'S02'},{'S04'},{'S02'},{'S02'},{'S05'}]; %naive
-sns = [{'S18'},{'S07'},{'S20'},{'S16'},{'S21'},{'S20'}]; %expert
-% sns = [{'S19'},{'S16'},{'S21'},{'S17'},{'S23'},{'S25'}]; %discreteAngles
-mdlName = 'mdlExpertTTypeTopThree';
+% sns = [{'S18'},{'S07'},{'S20'},{'S16'},{'S21'},{'S20'}]; %expert
+sns = [{'S19'},{'S16'},{'S21'},{'S17'},{'S23'},{'S25'}]; %discreteAngles
+mdlName = 'mdlDiscreteReduced';
 whiskDir = 'protraction';
-yOut = 'ttype';
+yOut = 'discrete';
 groupMdl = cell(length(mns),1); 
-DmatSelect = [1 11 13]; %feats from 1:21
+DmatSelect = [1:17]; %feats from 1:21
 
 % GLM model parameters
 glmnetOpt = glmnetSet;
 glmnetOpt.standardize = 0; %set to 0 b/c already standardized
 glmnetOpt.alpha = 0.95;
 glmnetOpt.xfoldCV = 5;
-glmnetOpt.numIterations = 50;
+glmnetOpt.numIterations = 10;
 
 %%
 for d = 1:length(sns)
@@ -100,22 +100,7 @@ for d = 1:length(sns)
 
     end
     
-    save(['Y:\Whiskernas\JK\Data analysis\Jon\' mdlName],'groupMdl')
+    save(['C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastructs\' mdlName],'groupMdl')
 end
-
-
-
-% [wt,idx] = sort(abs(tmp(2:end)));
-% survivedCoeffSorted = fieldsList(idx);
-%
-%
-%  figure(49);clf
-%  bar(1:length(wt),wt);
-%  ylabel('abs coeffs weight');
-%  xlabel('sorted features');
-%  title(['mcc=' num2str(mean(mdl.mcc)) '. accuracy=' num2str(mean(mdl.modelAccuracy)*100)])
-%
-
-%%
 
 

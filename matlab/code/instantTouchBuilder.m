@@ -18,3 +18,4 @@ it.touchKappaVH = it.touchKappaV./it.touchKappaH;
 it.touchPhi = ptouchOnsetMask .* preDecisionMask .* featureMat.phi;
 it.touchRadialD = touchOnsetMask .* preDecisionMask .* featureMat.arcLength; 
 it.touchCounts = sum(~isnan(it.touchTheta));
+

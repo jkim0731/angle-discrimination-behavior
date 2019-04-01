@@ -1,15 +1,11 @@
 
 mdlName = 'mdlNaive';
-load(['Y:\Whiskernas\JK\Data analysis\Jon\' mdlName])
+load(['C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastructs\' mdlName])
 %%
+
+clearvars -except groupMdl
 yOut = 'choice';
 standardization = 'yes';
-
-
-clear dtHistoY
-clear itHistoY
-clear dtHistoX
-clear itHistoX
 
 for i = 1:6
     
