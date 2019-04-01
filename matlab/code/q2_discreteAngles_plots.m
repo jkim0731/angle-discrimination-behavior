@@ -56,6 +56,17 @@ for k = 1:length(featNum)
 end
 legend(num2str((45:15:135)'))
 
+%% plot 3d scatter of feats
+figure(532);clf
+featNum = [9 19 13];
+mouseNum =5;
+for d = 1:length(ia)
+    hold on; scatter3(DmatX(ic==d,featNum(1)),DmatX(ic==d,featNum(2)),DmatX(ic==d,featNum(3)),'markeredgecolor',colors(d,:))
+    hold on; scatter3(mean(DmatX(ic==d,featNum(1))),mean(DmatX(ic==d,featNum(2))),mean(DmatX(ic==d,featNum(3))),200,'filled','markerfacecolor',colors(d,:))
+end
+xlabel(groupMdl{1}.fitCoeffsFields{featNum(1)})
+ylabel(groupMdl{1}.fitCoeffsFields{featNum(2)})
+zlabel(groupMdl{1}.fitCoeffsFields{featNum(3)})
 %% feature distribution population
 YVals  = unique(groupMdl{1}.io.Y);
 numMice = length(groupMdl);
@@ -81,17 +92,7 @@ end
 
 suptitle('Population scatter of features discriminating angle')
 
-%% plot 3d scatter of feats
-figure(532);clf
-featNum = [9 19 13];
-mouseNum =2;
-for d = 1:length(ia)
-    hold on; scatter3(DmatX(ic==d,featNum(1)),DmatX(ic==d,featNum(2)),DmatX(ic==d,featNum(3)),'markeredgecolor',colors(d,:))
-    hold on; scatter3(mean(DmatX(ic==d,featNum(1))),mean(DmatX(ic==d,featNum(2))),mean(DmatX(ic==d,featNum(3))),200,'filled','markerfacecolor',colors(d,:))
-end
-xlabel(groupMdl{1}.fitCoeffsFields{featNum(1)})
-ylabel(groupMdl{1}.fitCoeffsFields{featNum(2)})
-zlabel(groupMdl{1}.fitCoeffsFields{featNum(3)})
+
 
 %% plot correlation between selected features
 corrFeats = [13 11 12];
