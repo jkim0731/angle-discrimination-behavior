@@ -4,12 +4,12 @@ clear
 mns = [{'JK025'},{'JK027'},{'JK030'},{'JK036'},{'JK039'},{'JK052'}];
 % sns = [{'S05'},{'S02'},{'S04'},{'S02'},{'S02'},{'S05'}]; %naive
 % sns = [{'S18'},{'S07'},{'S20'},{'S16'},{'S21'},{'S20'}]; %expert
-sns = [{'S19'},{'S16'},{'S21'},{'S17'},{'S23'},{'S25'}]; %discreteAngles
-
-mdlName = 'mdlDiscreteFT';
+% sns = [{'S19'},{'S16'},{'S21'},{'S17'},{'S23'},{'S25'}]; %discreteAngles
+sns = [{'S22'},{'S14'},{'S22'},{'S18'},{'S24'},{'S26'}]; %radial distance
+mdlName = 'mdlRadial';
 whiskDir = 'protraction'; % 'protraction' or 'all' to choose which touches to use
-touchOrder = 'first'; % 'first' or 'all' to choose which touches pre-decision
-yOut = 'discrete'; % can be 'ttype' (45 vs 135), 'discrete' (45:15:135) or 'choice' (lick right probability)
+touchOrder = 'all'; % 'first' or 'all' to choose which touches pre-decision
+yOut = 'choice'; % can be 'ttype' (45 vs 135), 'discrete' (45:15:135) or 'choice' (lick right probability)
 
 groupMdl = cell(length(mns),1); 
 
