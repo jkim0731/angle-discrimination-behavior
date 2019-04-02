@@ -1,4 +1,4 @@
-function dt = duringTouchBuilder(behavioralStruct,wfa,whiskDir)
+function dt = duringTouchBuilder(behavioralStruct,wfa,whiskDir,touchOrder)
 
 %whiskDir can be protraction or ALL
 if strcmp(whiskDir,'protraction')
@@ -30,7 +30,15 @@ firstDIdx = cell(1,size(touchOnsetFrame,2));
 for i = 1:numel(touchOnsetFrame)
     firstDIdx{i} = find(pdm(:,i)==1,1,'last');
 end
-dt.mask.pdTouches = cellfun(@(x,y) find(x<y),touchOnsetFrame,firstDIdx,'uniformoutput',false);
+
+if strcmp(touchOrder,'first')
+    dt.mask.pdTouches = cellfun(@(x,y) find(x<y),touchOnsetFrame,firstDIdx,'uniformoutput',false);
+    dt.mask.pdTouches = cellfun(@(x) find(x==1) , dt.mask.pdTouches,'uniformoutput',false);
+elseif strcmp(touchOrder,'all')
+    dt.mask.pdTouches = cellfun(@(x,y) find(x<y),touchOnsetFrame,firstDIdx,'uniformoutput',false);
+else
+    error('need to select touch direction "all" or "first" ')
+end
 
 
 

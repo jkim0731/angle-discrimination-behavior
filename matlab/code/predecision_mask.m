@@ -44,7 +44,7 @@ end
 
 
 %Fill trials w/ no answer licks with median decision lick time. This lets
-%us look at features before "decisoin" to see what influenced mice to
+%us look at features before "decision" to see what influenced mice to
 %lick/notlick
 decisionLick(isnan(decisionLick)) = nanmedian(decisionLick);
 
