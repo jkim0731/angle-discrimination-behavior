@@ -21,7 +21,7 @@ title('7 angle prediction')
 
 
 %%
-mdlName = 'mdlDiscreteReduced';
+mdlName = 'mdlDiscreteFT';
 load(['C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastructs\' mdlName])
 
 %% confusion matrix of prediction accuracies
