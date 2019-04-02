@@ -5,12 +5,19 @@ mns = [{'JK025'},{'JK027'},{'JK030'},{'JK036'},{'JK039'},{'JK052'}];
 % sns = [{'S05'},{'S02'},{'S04'},{'S02'},{'S02'},{'S05'}]; %naive
 % sns = [{'S18'},{'S07'},{'S20'},{'S16'},{'S21'},{'S20'}]; %expert
 sns = [{'S19'},{'S16'},{'S21'},{'S17'},{'S23'},{'S25'}]; %discreteAngles
-mdlName = 'mdlDiscreteExpertChoice';
-whiskDir = 'protraction';
-yOut = 'choice';
-groupMdl = cell(length(mns),1); 
-DmatSelect = [1:17]; %feats from 1:21
 
+mdlName = 'mdlDiscreteFT';
+whiskDir = 'protraction'; % 'protraction' or 'all' to choose which touches to use
+touchOrder = 'first'; % 'first' or 'all' to choose which touches pre-decision
+yOut = 'discrete'; % can be 'ttype' (45 vs 135), 'discrete' (45:15:135) or 'choice' (lick right probability)
+
+groupMdl = cell(length(mns),1); 
+
+if strcmp(touchOrder,'first')
+    DmatSelect = [1:6 8:17]; %tossing touch counts since it is all ones
+else
+    DmatSelect = [1:17]; %feats from 1:21
+end
 % GLM model parameters
 glmnetOpt = glmnetSet;
 glmnetOpt.standardize = 0; %set to 0 b/c already standardized
@@ -43,9 +50,9 @@ for d = 1:length(sns)
     outcomes.mouseNumber = mouseNumber;
     %% Touch feature builder
     %instantaneous touch features
-    it = instantTouchBuilder(behavioralStruct,wfa,whiskDir);
+     it = instantTouchBuilder(behavioralStruct,wfa,whiskDir,touchOrder);
     %during touch features
-    dt = duringTouchBuilder(behavioralStruct,wfa,whiskDir);
+     dt = duringTouchBuilder(behavioralStruct,wfa,whiskDir,touchOrder);
     
     %% Plotting of instantaneous and during touch features
     %can set 'yOut' to build feature distribution based on 'ttype' or 'choice'
@@ -63,7 +70,7 @@ for d = 1:length(sns)
     if strcmp(yOut,'ttype')
         DmatY = (outcomes.matrix(1,:)==1)';
     elseif strcmp(yOut,'choice')
-        DmatY = (outcomes.matrix(3,:)==1)'; %REMOVE MISS TRIALS
+        DmatY = (outcomes.matrix(3,:)==1)'; 
     elseif strcmp(yOut,'discrete')
         DmatY = (outcomes.matrix(6,:))';
     end

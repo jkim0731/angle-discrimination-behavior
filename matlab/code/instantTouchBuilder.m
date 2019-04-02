@@ -1,6 +1,6 @@
-function it = instantTouchBuilder(behavioralStruct,wfa,whiskDir)
+function it = instantTouchBuilder(behavioralStruct,wfa,whiskDir,touchOrder)
 
-[touchOnsetMask, ~] = touchFinderMask(behavioralStruct,wfa,whiskDir);
+[touchOnsetMask, ~] = touchFinderMask(behavioralStruct,wfa,whiskDir,touchOrder);
 featureMat = featureBuilder(behavioralStruct,wfa);
 preDecisionMask = predecision_mask(behavioralStruct,wfa);
 
