@@ -27,16 +27,10 @@ mdlName = 'mdlNaiveTType';
 load(['C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastructs\' mdlName])
 
 for b = 1:length(groupMdl)
-[wt,idx] = sort(abs(mean(groupMdl{b}.fitCoeffs(2:end,:),2)));
-
 
 tmpWt = abs(mean(groupMdl{b}.fitCoeffs(2:end,:),2));
 finalWt(:,b) = tmpWt./sum(tmpWt);
 
-% selIdx(b) = find(cumsum(flipud(wt./sum(wt)))>.9,1,'first');
-% 
-% propWt(:,b) = wt./sum(wt);
-% propIdx(:,b) = idx;
 end
 
 [wt,idx] = sort(mean(finalWt,2));
@@ -46,14 +40,6 @@ threshValue = .9;
 threshIdx = find(cumsum(flipud(wt))>.9,1,'first');
 selFeatures = idx(end-threshIdx:end);
 topFeats = flipud(groupMdl{1}.fitCoeffsFields(selFeatures))
-
-% figure(439);clf
-% imagesc(corr(DmatX(:,selFeatures)))
-% set(gca,'xtick',[],'ytick',[])
-% ylabel('worst -> best feat')
-% xlabel('worst -> best feat')
-% axis square
-% title('corr between selected features') 
 
 figure(480);clf
 barwitherr(err(idx),wt,'facecolor',[.7 .7 .7]);

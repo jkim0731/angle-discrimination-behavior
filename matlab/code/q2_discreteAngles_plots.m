@@ -1,3 +1,26 @@
+%%
+mdlName = {'mdlDiscreteExpertDPhi','mdlDiscreteExpertDKappaH','mdlDiscreteExpertSlideDistance','mdlDiscreteExpertDKappaV','mdlDiscreteExpertTopTwo','mdlDiscreteExpertTopThree','mdlDiscreteExpertTopFour','mdlDiscreteReduced',};
+acc = nan(length(mdlName),6); 
+numVars = nan(1,length(mdlName)); 
+for p = 1:length(mdlName)
+    load(['C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastructs\' mdlName{p}])
+    numVars(p) = size(groupMdl{1}.io.X,2);
+    
+    acc(p,:) = cellfun(@(x) nanmean(x.gof.modelAccuracy),groupMdl) * 100; 
+    
+end
+
+chance = 1/length(unique(groupMdl{1}.io.Y)) *100; 
+figure(390);clf
+plot(acc,'ko-')
+hold on; plot([.5 length(mdlName)+.5],[chance chance],'-.k')
+% set(gca,'xlim',[.5 length(mdlName)+.5],'ylim',[-.2 1],'xtick',[1:length(mdlName)],'xticklabel',mdlName,'ytick',0:.25:1)
+set(gca,'xlim',[.5 length(mdlName)+.5],'ylim',[0 100],'xtick',[1:length(mdlName)],'xticklabel',{'4','3','2','1','2+1','3+2+1','4+3+2+1','full'},'ytick',0:25:100)
+ylabel('model prediction accuracy (%)')
+title('7 angle prediction') 
+
+
+%%
 mdlName = 'mdlDiscreteReduced';
 load(['C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastructs\' mdlName])
 
@@ -33,7 +56,7 @@ xlabel('servoAngle');ylabel('proportion of trials')
 % plot params specification
 
 mouseNum =5;
-featNum = [1:21];
+featNum = [1:17];
 
 
 DmatY = groupMdl{mouseNum}.io.Y;
@@ -56,17 +79,7 @@ for k = 1:length(featNum)
 end
 legend(num2str((45:15:135)'))
 
-%% plot 3d scatter of feats
-figure(532);clf
-featNum = [9 19 13];
-mouseNum =5;
-for d = 1:length(ia)
-    hold on; scatter3(DmatX(ic==d,featNum(1)),DmatX(ic==d,featNum(2)),DmatX(ic==d,featNum(3)),'markeredgecolor',colors(d,:))
-    hold on; scatter3(mean(DmatX(ic==d,featNum(1))),mean(DmatX(ic==d,featNum(2))),mean(DmatX(ic==d,featNum(3))),200,'filled','markerfacecolor',colors(d,:))
-end
-xlabel(groupMdl{1}.fitCoeffsFields{featNum(1)})
-ylabel(groupMdl{1}.fitCoeffsFields{featNum(2)})
-zlabel(groupMdl{1}.fitCoeffsFields{featNum(3)})
+
 %% feature distribution population
 YVals  = unique(groupMdl{1}.io.Y);
 numMice = length(groupMdl);
@@ -134,6 +147,28 @@ for g = 1:length(groupMdl)
 end
 
 [~,bfs] = sort(sum(rankScores));
+
+topFeats = flipud(groupMdl{1}.fitCoeffsFields(bfs))
+
+
+%% plot 3d scatter of top 3 feats
+figure(532);clf
+featNum = bfs(end-2:end);
+mouseNum =2;
+DmatY = groupMdl{mouseNum}.io.Y;
+DmatX = groupMdl{mouseNum}.io.X;
+[~,ia,ic] = unique(DmatY);
+a_counts = accumarray(ic,1);
+starts = [1 ; cumsum(a_counts(1:end-1))+1];
+ends = cumsum(a_counts);
+colors = jet(numel(ia));
+for d = 1:length(ia)
+    hold on; scatter3(DmatX(ic==d,featNum(1)),DmatX(ic==d,featNum(2)),DmatX(ic==d,featNum(3)),'markeredgecolor',colors(d,:))
+    hold on; scatter3(mean(DmatX(ic==d,featNum(1))),mean(DmatX(ic==d,featNum(2))),mean(DmatX(ic==d,featNum(3))),200,'filled','markerfacecolor',colors(d,:))
+end
+xlabel(groupMdl{1}.fitCoeffsFields{featNum(1)})
+ylabel(groupMdl{1}.fitCoeffsFields{featNum(2)})
+zlabel(groupMdl{1}.fitCoeffsFields{featNum(3)})
 
 %%
 mouseNum = 5;

@@ -27,6 +27,6 @@ rlick(intersect(find(ttype==0),find(tCorrect==0))) = 1;
 llick(intersect(find(ttype==0),find(tCorrect==1))) = 1; 
 llick(intersect(find(ttype==1),find(tCorrect==0))) = 1; 
 
-
-outcomes.labels = {'R trials','L trials','R lick','L lick','trialCorrect','servoAngles'};
-outcomes.matrix = [ttype ==1 ; ttype == 0; rlick ; llick ; tCorrect ; servoAngles];
+% ** TOUCH TRIALS NEED TO BE POPULATED BY DESIGN MATRIX ** %
+outcomes.labels = {'R trials','L trials','R lick','L lick','trialCorrect','servoAngles','touchTrials'};
+outcomes.matrix = [ttype ==1 ; ttype == 0; rlick ; llick ; tCorrect ; servoAngles ; ones(1,length(servoAngles))];

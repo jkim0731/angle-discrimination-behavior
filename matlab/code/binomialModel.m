@@ -1,11 +1,13 @@
 function mdl = binomialModel(mdl,DmatX,DmatY,glmnetOpt)   
 
     mdl.fitCoeffs = nan(size(DmatX,2)+1,glmnetOpt.numIterations);
-
+    TTangles = mdl.outcomes.matrix(6,logical(mdl.outcomes.matrix(7,:)));
+    mdl.io.XYYhat = [];
+    
     for h = 1:glmnetOpt.numIterations
         %% stratified distribution of classes for test and train sets
         diffClasses = unique(DmatY);
-        
+
         trainIdx = [];
         testIdx = [];
         for i = 1:length(diffClasses)
@@ -48,5 +50,6 @@ function mdl = binomialModel(mdl,DmatX,DmatY,glmnetOpt)
             mdl.gof.mcc(h) = 0;
         end
         mdl.gof.modelAccuracy(h) = mean(testDmatY == (pred));
+        mdl.io.XYYhat = [mdl.io.XYYhat ; [TTangles(testIdx)' testDmatY probability]]; 
         
     end
