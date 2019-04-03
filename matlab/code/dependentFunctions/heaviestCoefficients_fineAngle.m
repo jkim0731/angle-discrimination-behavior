@@ -25,7 +25,7 @@ end
 err = std(rankWeights,[],2)./sqrt(size(rankWeights,2)); 
 topFeats = flipud(groupMdl{1}.fitCoeffsFields(idx));
 
-figure(480);clf
+figure(480)
 barwitherr(err(idx),wt,'facecolor',[.7 .7 .7]);
 set(gca,'xtick',[])
  ylabel('abs coeffs weight');
@@ -40,7 +40,7 @@ set(gca,'xtick',[])
 topFeats = flipud(groupMdl{1}.fitCoeffsFields(idx))
 
 %% 3D scatter of heaviest coefficients 
-figure(532);clf
+figure;
 featNum = idx(end-2:end);
 mouseNum =5;
 DmatY = groupMdl{mouseNum}.io.Y;

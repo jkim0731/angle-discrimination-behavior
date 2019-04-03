@@ -2,7 +2,7 @@ function psychogof = psychometric_curves_builder(mdlName)
 
 load(['C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastructs\' mdlName])
 
-figure(123);clf
+figure;
 for i = 1:length(groupMdl)
     TT = logical(groupMdl{i}.outcomes.matrix(7,:));
     angles = groupMdl{i}.outcomes.matrix(6,TT);
@@ -28,7 +28,6 @@ for i = 1:length(groupMdl)
     psychogof.RMSE(i) = sqrt(sum((trueRlick- testpRlick).^2) ./ length(trueRlick)); %RMSE of each individual prediction
     psychogof.MAE(i) = sum(abs((trueRlick- testpRlick))) ./ length(trueRlick); %Mean Absolute Error (MAE)
     
-    figure(123)
     subplot(2,3,i)
     shadedErrorBar(uVals,predPsycho(:,1),predPsycho(:,2),'lineprops','k')
     hold on;shadedErrorBar(uVals,rawPsycho(:,1),rawPsycho(:,2),'lineprops','r')

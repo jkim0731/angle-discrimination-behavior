@@ -11,8 +11,7 @@ for p = 1:length(mdlName)
     
 end
 
-figure(390);clf
-plot(gof,'ko-')
+figure;plot(gof,'ko-')
 if numel(mdlName)==6
     set(gca,'xtick',[1:length(mdlName)],'xticklabel',{'3','2','1','2+1','3+2+1','full'},'xlim',[.5 length(mdlName)+.5])
 elseif numel(mdlName)==8

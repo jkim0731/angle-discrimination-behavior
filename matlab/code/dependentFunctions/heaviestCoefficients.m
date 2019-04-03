@@ -13,7 +13,7 @@ end
 err = std(populationWt,[],2)./sqrt(size(populationWt,2)); 
 topFeats = flipud(groupMdl{1}.fitCoeffsFields(idx));
 
-figure(480);clf
+figure;
 barwitherr(err(idx),wt,'facecolor',[.7 .7 .7]);
 set(gca,'xtick',[])
  ylabel('abs coeffs weight');
