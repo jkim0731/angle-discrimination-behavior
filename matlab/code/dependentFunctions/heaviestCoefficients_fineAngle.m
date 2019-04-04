@@ -58,5 +58,5 @@ end
 xlabel(groupMdl{1}.fitCoeffsFields{featNum(1)})
 ylabel(groupMdl{1}.fitCoeffsFields{featNum(2)})
 zlabel(groupMdl{1}.fitCoeffsFields{featNum(3)})
-title(['3d scatter of three best features for mouse num ' num2str(mouseNum)])
+% title(['3d scatter of three best features for mouse num ' num2str(mouseNum)])
 

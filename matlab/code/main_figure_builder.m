@@ -1,11 +1,19 @@
+saveLoc = 'C:\Users\shires\Dropbox\Object Angle Coding in vS1\Figures\AngleDiscrimBehavior\' ;
+
 %% FIG A: modeled choice prediction
 mdlName = {'mdlNaiveChoice','mdlDiscreteNaiveChoice','mdlExpertChoice','mdlDiscreteChoice','mdlRadialChoice'};
 gof_comparator(mdlName,'mcc');
+set(gcf, 'Position',  [100, 100, 400, 500])
+print([saveLoc 'figA'],'-depsc')
 
 %% FIG B: Comparison of the top feature in choice (DKappaV) for naive vs expert
-yOut = 'choice'; %can set to 'ttype' or 'choice' 
-colors = {'r','b'};
-colors = {'m','c'};
+yOut = 'ttype'; %can set to 'ttype' or 'choice' 
+if strcmp(yOut,'ttype')
+    colors = {'r','b'};
+elseif strcmp(yOut,'choice')
+    colors = {'m','c'};
+end
+
 numBins = 15; %bins for histogram plot
 naiveHisto = population_histogram('mdlNaiveChoice',yOut,numBins);
 expertHisto = population_histogram('mdlExpertChoice',yOut,numBins);
@@ -33,6 +41,8 @@ set(gca,'xtick',[-2:1:2],'ytick',0:.1:1,'ylim',[0 .25])
 title(['Expert ' naiveHisto.fields{featureNumber}])
 
 set(gcf, 'Position',  [100, 100, 400, 600])
+print([saveLoc 'figB1'],'-depsc')
+
 %% FIG C: Psychometric curve building using top feature (DKappaV) in fine angle discrimination 
 psychoFull = psychometric_curves_builder('mdlDiscreteChoice');
 psychoDK = psychometric_curves_builder('mdlDiscreteChoiceDKappaV');
@@ -46,9 +56,11 @@ hold on;shadedErrorBar(45:15:135, psychoFull.plot.modeled{mouseNum(i)}(:,1), psy
 hold on;shadedErrorBar(45:15:135, psychoDK.plot.modeled{mouseNum(i)}(:,1), psychoDK.plot.modeled{mouseNum(i)}(:,2),'lineprops','k-.');
 set(gca,'xtick',[45 90 135],'ytick',0:.25:1)
 end
-set(gcf, 'Position',  [100, 100, 400, 600])
+set(gcf, 'Position',  [100, 100, 300, 600])
 legend('mouse','full model','DKappaV')
 ylabel('P(lick right)')
+
+print([saveLoc 'figC'],'-depsc')
 
 %supFig C
 psychoTopTwo = psychometric_curves_builder('mdlDiscreteChoiceTopTwo');
@@ -62,15 +74,17 @@ ylabel('RMSE from raw')
 
 %% FIG D: Heat map of fine angle discrimination 
 fine_angle_cmatPlot('mdlDiscrete')
-
+print([saveLoc 'figD'],'-depsc')
 %% FIG E: Slide distance adds significnatly to fine angle discrimination 
 
 %identify top features and plot 3d scatter of top 3 feats
 heaviestCoefficients_fineAngle('mdlDiscrete');
-
+print([saveLoc 'figE'],'-depsc')
 %using topFeats find a reduced model that can do as well as the full model 
 mdlName = {'mdlDiscreteDPhi','mdlDiscreteDKappaH','mdlDiscreteSlideDistance','mdlDiscreteDKappaV','mdlDiscreteTopTwo','mdlDiscreteTopThree','mdlDiscreteTopFour','mdlDiscrete'};
 gof = gof_comparator(mdlName,'modelAccuracy');
+set(gcf, 'Position',  [100, 100, 400, 500])
+print([saveLoc 'figF'],'-depsc')
 
 [~,p] = ttest(gof(end,:),gof(7,:))
 

@@ -20,11 +20,11 @@ for g = 1:length(groupMdl)
 end
 
 figure;
-colormap(jet)
+colormap(parula)
 imagesc(cmatBlank./length(groupMdl))
 axis square
     set(gca,'xtick',[1 4 7],'xticklabel',{'45','90','135'})
     set(gca,'ytick',[1 4 7],'yticklabel',{'45','90','135'})
 title('population prediction') 
-caxis([0 max(max(cmatBlank./length(groupMdl)))])
+caxis([0 .8])
 colorbar
