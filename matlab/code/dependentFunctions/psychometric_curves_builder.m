@@ -1,4 +1,4 @@
-function psychogof = psychometric_curves_builder(mdlName)
+function psycho = psychometric_curves_builder(mdlName)
 
 load(['C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastructs\' mdlName])
 
@@ -23,15 +23,18 @@ for i = 1:length(groupMdl)
         %         predPsycho(b,:) = [mean(testpRlick(idxtest==b)) std(testpRlick(idxtest==b))]; %STD
     end
     
-    psychogof.correlation(i) = corr(rawPsycho(:,1),predPsycho(:,1));
-    %     rawToPredRMSE = sqrt(sum((predPsycho(:,1) - rawPsycho(:,1)).^2) ./ length(uVals)); %RMSE of average model and true
-    psychogof.RMSE(i) = sqrt(sum((trueRlick- testpRlick).^2) ./ length(trueRlick)); %RMSE of each individual prediction
-    psychogof.MAE(i) = sum(abs((trueRlick- testpRlick))) ./ length(trueRlick); %Mean Absolute Error (MAE)
+    psycho.gof.correlation(i) = corr(rawPsycho(:,1),predPsycho(:,1));
+    psycho.gof.RMSE(i) = sqrt(sum((predPsycho(:,1) - rawPsycho(:,1)).^2) ./ length(uVals)); %RMSE of average model and true
+%     psychogof.RMSE(i) = sqrt(sum((trueRlick- testpRlick).^2) ./ length(trueRlick)); %RMSE of each individual prediction
+    psycho.gof.MAE(i) = sum(abs((trueRlick- testpRlick))) ./ length(trueRlick); %Mean Absolute Error (MAE)
+    
+    psycho.plot.raw{i} = rawPsycho; 
+    psycho.plot.modeled{i} = predPsycho; 
     
     subplot(2,3,i)
     shadedErrorBar(uVals,predPsycho(:,1),predPsycho(:,2),'lineprops','k')
     hold on;shadedErrorBar(uVals,rawPsycho(:,1),rawPsycho(:,2),'lineprops','r')
     set(gca,'ytick',[0:.25:1],'ylim',[0 1],'xtick',[45 90 135])
-    title(['model to raw RMSE = ' num2str(psychogof.RMSE(i))])
+    title(['model to raw RMSE = ' num2str(psycho.gof.RMSE(i))])
 end
 suptitle(['population prediction of choice using ' num2str(numel(groupMdl{i}.fitCoeffsFields)) ' features'])

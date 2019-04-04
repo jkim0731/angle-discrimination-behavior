@@ -1,90 +1,79 @@
-%This script it used to take built models from _main_builder and build out
-%figures for data and results visualization. 
-
-%Script is broken down into questions asked and plots used to answer. 
-
-%% Q1 which touch features best discriminate angles (45 vs 135)
-%population distribution of features
-mdlName = 'mdlExpertTType'; %can use mdlExpertTType or mdlRadialChoice
-yOut = 'ttype'; %can set to 'ttype' or 'choice' 
-numBins = 15; %bins for histogram plot
-population_histogram(mdlName,yOut,numBins);
-
-%MCC comparison of ttype prediction 
-mdlName = {'mdlNaiveTType','mdlExpertTType'};
+%% FIG A: modeled choice prediction
+mdlName = {'mdlNaiveChoice','mdlDiscreteNaiveChoice','mdlExpertChoice','mdlDiscreteChoice','mdlRadialChoice'};
 gof_comparator(mdlName,'mcc');
 
-%which feature is most important in ttype discrimination
-mdlName ='mdlExpertTType';
-heaviestCoefficients(mdlName);
-
-%what reduced model will have ttype discrimination closest to full model
-mdlName = {'mdlExpertTTypeRadialD','mdlExpertTTypeTouchTheta','mdlExpertTTypeDKappaV','mdlExpertTTypeDPhi','mdlExpertTTypeTopTwo','mdlExpertTTypeTopThree','mdlExpertTTypeTopFour','mdlExpertTType'};
-gof_comparator(mdlName,'mcc');
-
-%% Q2 which touch features best decode choice 
-
-%population distribution of features
-mdlName = 'mdlExpertChoice'; %can use mdlNaiveChoice or mdlExpertChoice
+%% FIG B: Comparison of the top feature in choice (DKappaV) for naive vs expert
 yOut = 'choice'; %can set to 'ttype' or 'choice' 
+colors = {'r','b'};
+colors = {'m','c'};
 numBins = 15; %bins for histogram plot
-population_histogram(mdlName,yOut,numBins);
+naiveHisto = population_histogram('mdlNaiveChoice',yOut,numBins);
+expertHisto = population_histogram('mdlExpertChoice',yOut,numBins);
 
-%MCC comparison of choice prediction 
-mdlName = {'mdlNaiveChoice','mdlExpertChoice'};
-gof_comparator(mdlName,'mcc');
+featureNumber = 13; 
+naiveY = nanmean(naiveHisto.Y{featureNumber}); 
+naiveYerr = nanstd(naiveHisto.Y{featureNumber}) ./ sqrt(size(naiveHisto,1));
+naiveX = naiveHisto.X{featureNumber};
 
-%which feature is most important in choice discrimination
-mdlName ='mdlExpertChoice';
-heaviestCoefficients(mdlName);
+expertY = nanmean(expertHisto.Y{featureNumber}); 
+expertYerr = nanstd(expertHisto.Y{featureNumber}) ./ sqrt(size(expertHisto,1));
+expertX = expertHisto.X{featureNumber};
 
-%what reduced model will have choice discrimination closest to full model
-mdlName = {'mdlExpertKappaV','mdlExpertDKappaH','mdlExpertDPhi','mdlExpertDKappaV','mdlExpertTopTwo','mdlExpertTopThree','mdlExpertTopFour','mdlExpert'};
-gof_comparator(mdlName,'mcc');
+figure(5);clf
+subplot(2,1,1)
+shadedErrorBar(naiveX,naiveY(1:length(naiveX)),naiveYerr(1:length(naiveX)),'lineprops',[colors{1} '-.'])
+hold on; shadedErrorBar(naiveX,naiveY(length(naiveX)+1:end),naiveYerr(length(naiveX)+1:end),'lineprops',[colors{2} '-.'])
+set(gca,'xtick',[-2:1:2],'ytick',0:.1:1,'ylim',[0 .25])
+title(['Naive ' naiveHisto.fields{featureNumber}])
+legend('R','L')
+subplot(2,1,2)
+shadedErrorBar(expertX,expertY(1:length(expertX)),expertYerr(1:length(expertX)),'lineprops',[colors{1} '-.'])
+hold on; shadedErrorBar(expertX,expertY(length(expertX)+1:end),expertYerr(length(expertX)+1:end),'lineprops',[colors{2} '-.'])
+set(gca,'xtick',[-2:1:2],'ytick',0:.1:1,'ylim',[0 .25])
+title(['Expert ' naiveHisto.fields{featureNumber}])
 
-%% Q3 what happens to choice discrimination in the presence of a distractor?
+set(gcf, 'Position',  [100, 100, 400, 600])
+%% FIG C: Psychometric curve building using top feature (DKappaV) in fine angle discrimination 
+psychoFull = psychometric_curves_builder('mdlDiscreteChoice');
+psychoDK = psychometric_curves_builder('mdlDiscreteChoiceDKappaV');
 
-%MCC comparison of choice prediction 
-mdlName = {'mdlNaiveChoice','mdlExpertChoice','mdlRadialChoice'};
-gof_comparator(mdlName,'mcc');
+mouseNum = [1 5];
+figure(6);clf
+for i = 1:length(mouseNum) 
+subplot(2,1,i); 
+shadedErrorBar(45:15:135, psychoFull.plot.raw{mouseNum(i)}(:,1), psychoFull.plot.raw{mouseNum(i)}(:,2),'lineprops','r');
+hold on;shadedErrorBar(45:15:135, psychoFull.plot.modeled{mouseNum(i)}(:,1), psychoFull.plot.modeled{mouseNum(i)}(:,2),'lineprops','k');
+hold on;shadedErrorBar(45:15:135, psychoDK.plot.modeled{mouseNum(i)}(:,1), psychoDK.plot.modeled{mouseNum(i)}(:,2),'lineprops','k-.');
+set(gca,'xtick',[45 90 135],'ytick',0:.25:1)
+end
+set(gcf, 'Position',  [100, 100, 400, 600])
+legend('mouse','full model','DKappaV')
+ylabel('P(lick right)')
 
-%which feature is most important in choice discrimination
-mdlName ='mdlRadialChoice';
-heaviestCoefficients(mdlName)
+%supFig C
+psychoTopTwo = psychometric_curves_builder('mdlDiscreteChoiceTopTwo');
+psychoKappaV = psychometric_curves_builder('mdlDiscreteChoiceKappaV');
 
-%what reduced model will have choice discrimination closest to full model
-mdlName = {'mdlRadialChoiceKappaV','mdlRadialChoiceDPhi','mdlRadialChoiceDKappaV','mdlRadialChoiceTopTwo','mdlRadialChoiceTopThree','mdlRadialChoice'};
-gof_comparator(mdlName,'mcc');
+figure(7);clf
+plot([psychoKappaV.gof.RMSE ; psychoDK.gof.RMSE; psychoTopTwo.gof.RMSE; psychoFull.gof.RMSE],'ko-')
+set(gca,'xtick',[1:4],'xlim',[.5 4.5],'xticklabel',{'Touch KappaV','DKappaV','TopTwo','Full'})
+ylabel('RMSE from raw')
+[~,p] = ttest(psychoFull.gof.RMSE,psychoDK.gof.RMSE)
 
-%% Q4 which features at touch are most important for discriminating fine angles?
+%% FIG D: Heat map of fine angle discrimination 
+fine_angle_cmatPlot('mdlDiscrete')
 
-%Scatter of the mean of each feature for each mouse (open circles) or the
-%population (filled) at each distinct angle from 45(blue) to 135 (red). 
-% -features are standardized. 
-mdlName = 'mdlDiscrete'; 
-population_angle_feature_scatter(mdlName)
-
-fine_angle_cmatPlot(mdlName)
+%% FIG E: Slide distance adds significnatly to fine angle discrimination 
 
 %identify top features and plot 3d scatter of top 3 feats
-heaviestCoefficients_fineAngle(mdlName);
+heaviestCoefficients_fineAngle('mdlDiscrete');
 
 %using topFeats find a reduced model that can do as well as the full model 
-mdlName = {'mdlDiscreteExpertTouchTheta','mdlDiscreteExpertDKappaV','mdlDiscreteExpertDKappaH','mdlDiscreteExpertSlideDistance','mdlDiscreteExpertTopTwo','mdlDiscreteExpertTopThree','mdlDiscreteExpertTopFour','mdlDiscrete'};
+mdlName = {'mdlDiscreteDPhi','mdlDiscreteDKappaH','mdlDiscreteSlideDistance','mdlDiscreteDKappaV','mdlDiscreteTopTwo','mdlDiscreteTopThree','mdlDiscreteTopFour','mdlDiscrete'};
 gof = gof_comparator(mdlName,'modelAccuracy');
 
-%% Q5 Which feature at touch are most important for discriminating choice at fine angles?
-mdlName = 'mdlDiscreteExpertChoice'; 
-psychogofAll = psychometric_curves_builder(mdlName);
-heaviestCoefficients(mdlName);
+[~,p] = ttest(gof(end,:),gof(7,:))
 
-%Aside: building choice prediction using first touches only 
-mdlName = 'mdlDiscreteExpertChoiceFT'; 
-psychogofFT = psychometric_curves_builder(mdlName);
-heaviestCoefficients(mdlName);
 
-%comparing RMSE between first and all touch model 
-figure;clf
-plot([psychogofFT.RMSE ;psychogofAll.RMSE],'ko-')
-set(gca,'xlim',[.5 2.5],'xtick',[1 2],'ylim',[.2 .6],'ytick',[0:.2:.6],'xticklabel',{'first touch','all touches'})
+
 

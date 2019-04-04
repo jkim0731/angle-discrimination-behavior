@@ -1,4 +1,4 @@
-function population_histogram(mdlName,yOut,numBins)
+function histoFinal = population_histogram(mdlName,yOut,numBins)
 load(['C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastructs\' mdlName]);
 standardization = 'yes';
 
@@ -117,7 +117,8 @@ suptitle(['POPULATION FEATURE HISTOGRAM'])
 
 
 
-
-
+histoFinal.fields = [itFields ; dtFields]; 
+histoFinal.X = [itHistoX dtHistoX]';
+histoFinal.Y = [itHistoY dtHistoY]';
 
 

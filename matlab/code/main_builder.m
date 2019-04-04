@@ -5,12 +5,13 @@ mns = [{'JK025'},{'JK027'},{'JK030'},{'JK036'},{'JK039'},{'JK052'}];
 
 % sns = [{'S05'},{'S02'},{'S04'},{'S02'},{'S02'},{'S05'}]; %naive
 % sns = [{'S18'},{'S07'},{'S20'},{'S16'},{'S21'},{'S20'}]; %expert
-sns = [{'S19'},{'S16'},{'S21'},{'S17'},{'S23'},{'S25'}]; %discreteAngles
+sns = [{'S04'},{'S03'},{'S03'},{'S01'},{'S01'},{'S03'}]; %naive discreteAngles
+% sns = [{'S19'},{'S16'},{'S21'},{'S17'},{'S23'},{'S25'}]; %expert discreteAngles
 % sns = [{'S22'},{'S14'},{'S22'},{'S18'},{'S24'},{'S26'}]; %radial distance
 
-mdlName = 'mdlDiscreteExpertChoiceFT';
+mdlName = 'mdlDiscreteNaiveChoice';
 whiskDir = 'protraction'; % 'protraction' or 'all' to choose which touches to use
-touchOrder = 'first'; % 'first' or 'all' to choose which touches pre-decision
+touchOrder = 'all'; % 'first' or 'all' to choose which touches pre-decision
 yOut = 'choice'; % can be 'ttype' (45 vs 135), 'discrete' (45:15:135) or 'choice' (lick right probability)
 
 groupMdl = cell(length(mns),1); 
@@ -25,7 +26,7 @@ glmnetOpt = glmnetSet;
 glmnetOpt.standardize = 0; %set to 0 b/c already standardized
 glmnetOpt.alpha = 0.95;
 glmnetOpt.xfoldCV = 5;
-glmnetOpt.numIterations = 50;
+glmnetOpt.numIterations = 10;
 
 saveDir = 'C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastructs\';
 

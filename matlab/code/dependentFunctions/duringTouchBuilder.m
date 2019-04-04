@@ -45,19 +45,19 @@ end
 %     y.(tfchunks),'uniformoutput',false), wfa.trials, 'uniformoutput', false); % max DeltaTheta from touchOnset Theta
 
 %Minor fix for nan values - interpolate using two points around nan values 
-for g=1:length(wfa.trials)
-    fieldsToCheck = {'theta','phi','kappaH','kappaV','arcLength'};
-    for u = 1:length(fieldsToCheck)
-        nanIdx = find(isnan(wfa.trials{g}.(fieldsToCheck{u})));
-        nanIdx = nanIdx(nanIdx<length(wfa.trials{g}.(fieldsToCheck{u})));
-        if sum(diff(nanIdx)==1)<1 %This is to only interp for indices that are not consecutive
-            if ~isempty(nanIdx)
-                fillers = mean([wfa.trials{g}.(fieldsToCheck{u})(nanIdx-1) wfa.trials{g}.(fieldsToCheck{u})(nanIdx+1)],2);
-                wfa.trials{g}.(fieldsToCheck{u})(nanIdx) = fillers;
-            end
-        end
-    end
-end
+% for g=1:length(wfa.trials)
+%     fieldsToCheck = {'theta','phi','kappaH','kappaV','arcLength'};
+%     for u = 1:length(fieldsToCheck)
+%         nanIdx = find(isnan(wfa.trials{g}.(fieldsToCheck{u})));
+%         nanIdx = nanIdx(nanIdx<length(wfa.trials{g}.(fieldsToCheck{u})));
+%         if sum(diff(nanIdx)==1)<1 %This is to only interp for indices that are not consecutive
+%             if ~isempty(nanIdx)
+%                 fillers = mean([wfa.trials{g}.(fieldsToCheck{u})(nanIdx-1) wfa.trials{g}.(fieldsToCheck{u})(nanIdx+1)],2);
+%                 wfa.trials{g}.(fieldsToCheck{u})(nanIdx) = fillers;
+%             end
+%         end
+%     end
+% end
 
 
 %during touch features

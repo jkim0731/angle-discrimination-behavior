@@ -21,23 +21,26 @@ for g = 1:length(groupMdl)
     
 end
 
-[wt,idx] = sort(mean(rankWeights,2)); %ranking of features based on the mean of all features 
-err = std(rankWeights,[],2)./sqrt(size(rankWeights,2)); 
-topFeats = flipud(groupMdl{1}.fitCoeffsFields(idx));
+% ranking of features based on the mean of all features 
+% [wt,idx] = sort(mean(rankWeights,2)); %
+% err = std(rankWeights,[],2)./sqrt(size(rankWeights,2)); 
+% topFeats = flipud(groupMdl{1}.fitCoeffsFields(idx));
+
+%ranking of features based on a system of points based on feature importance in predicting each angle type
+normRS = rankScores./sum(rankScores,2);
+[wt,idx] = sort(mean(normRS)); 
+err = std(normRS,[],1) ./ sqrt(size(normRS,1));
+topFeats = flipud(groupMdl{1}.fitCoeffsFields(idx))
+
 
 figure(480)
 barwitherr(err(idx),wt,'facecolor',[.7 .7 .7]);
 set(gca,'xtick',[])
- ylabel('abs coeffs weight');
+ ylabel('abs coeffs rank score');
  xlabel('sorted features');
  title('population feature weight')
- set(gca,'ylim',[0 .6])
+%  set(gca,'ylim',[0 .6])
 
-
-% [~,bfs] = sort(sum(rankScores)); %ranking of features based on a system
-% of points based on feature importance in predicting each angle type
-
-topFeats = flipud(groupMdl{1}.fitCoeffsFields(idx))
 
 %% 3D scatter of heaviest coefficients 
 figure;
