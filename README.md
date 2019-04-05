@@ -10,10 +10,8 @@ Questions targeted to behavioral choice:
 2) Which whisker dependent touch features are most important in driving angle perception? 
 
 Main scripts: 
-main_builder: primary script used to package trial by trial whisker motion into design matrices and answer the above 2 questions
-
+main_builder: primary script used to package trial by trial whisker motion into a struct 
 main_figure_builder: script used to compile main and supplemental figures for publication. 
-
 master_figure_builder: script for detailed adhoc plots and analysis. 
 
 Requirements:
