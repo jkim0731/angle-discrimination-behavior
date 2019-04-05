@@ -3,7 +3,8 @@
 Scripts primarily used to analyze behavioral choice in object angle discrimination of mice. 
 
 Primary question: what are the neural correlates of object angle representaition in mouse vS1? So, why look at behavior? 
-Whisker dependent features and choice parameters made my rodents will inform and reduce the search space of what whisker dependent features will drive object angle representation.
+Whisker dependent features obtained and choice parameters made by rodents will inform and reduce the search space of what whisker dependent features will drive object angle representation in vS1.
+
 Questions targeted to behavioral choice:
 1) What whisker dependent touch features best discriminate coarse (45 vs 135) and fine (45:15:135) angles? 
 2) Which whisker dependent touch features are most important in driving angle perception? 
