@@ -9,10 +9,14 @@ Questions targeted to behavioral choice:
 1) What whisker dependent touch features best discriminate coarse (45 vs 135) and fine (45:15:135) angles? 
 2) Which whisker dependent touch features are most important in driving angle perception? 
 
+Main scripts: 
 main_builder: primary script used to package trial by trial whisker motion into design matrices and answer the above 2 questions
+
 main_figure_builder: script used to compile main and supplemental figures for publication. 
+
 master_figure_builder: script for detailed adhoc plots and analysis. 
 
-
+Requirements:
+glmnet from Qian and Hastie (2013) - https://web.stanford.edu/~hastie/glmnet_matlab/
 
 Written and built in MATLAB 2018b
