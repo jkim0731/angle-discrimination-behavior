@@ -16,6 +16,6 @@ master_figure_builder - script for detailed adhoc plots and analysis.
 
 Requirements:
 glmnet from Qian and Hastie (2013) - https://web.stanford.edu/~hastie/glmnet_matlab/
-
+HLab_matlabTools which can be forked from jkim0731.
 
 Written and built in MATLAB 2018b
