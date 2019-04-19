@@ -15,7 +15,7 @@ main_figure_builder - script used to compile main and supplemental figures for p
 master_figure_builder - script for detailed adhoc plots and analysis. 
 
 ### Summary figure: 
-![Alt text](./pictures/sample_publication_fig)
+![Alt text](./pictures/sample_publication_fig.png)
 
 ## Requirements:
 glmnet from Qian and Hastie (2013) - https://web.stanford.edu/~hastie/glmnet_matlab/ <br />
