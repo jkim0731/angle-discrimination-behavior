@@ -10,9 +10,9 @@ Whisker dependent features obtained and choice parameters made by rodents will i
 2) Which whisker dependent touch features are most important in driving angle perception? 
 
 ## Main scripts: 
-main_builder - primary script used to package trial by trial whisker motion into a struct 
-main_figure_builder - script used to compile main and supplemental figures for publication. 
-master_figure_builder - script for detailed adhoc plots and analysis. 
+main_builder - primary script used to package trial by trial whisker motion into a struct. <br />
+main_figure_builder - script used to compile main and supplemental figures for publication. <br />
+master_figure_builder - script for detailed adhoc plots and analysis. <br />
 
 ### Summary figure: 
 ![Alt text](./pictures/sample_publication_fig.png)
