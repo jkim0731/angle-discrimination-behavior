@@ -1,6 +1,7 @@
 function histoFinal = population_histogram(mdlName,yOut,numBins)
 load(['C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastructs\' mdlName]);
 standardization = 'yes';
+% standardization = 'no';
 
 for i = 1:6
     
@@ -87,28 +88,36 @@ end
 %% POPULATION HISTOGRAM
 
 dtFields = fields(groupMdl{1}.dt.features);
-figure(45800);clf
+figure;
 itFields = fields(groupMdl{1}.it);
 
-for k = 1:length(itHistoY)
-    
+itSorting = [1,5,2,3,6,7];
+dtSorting = [3,4,5,6,2,1];
+
+% for k = 1:length(itHistoY)
+for kk = 1 : length(itSorting)
+    k = itSorting(kk);
+
     currFeat = mean(itHistoY{k});
     f1 = currFeat(1:size(itHistoY{k},2)/2);
     f2 = currFeat(size(itHistoY{k},2)/2+1:end);
-    
-    subplot(3,7,k)
+
+    subplot(2,6,kk)
     bar(itHistoX{k},f1,colors{1},'facealpha',.7)
     hold on; bar(itHistoX{k},f2,colors{2},'r','facealpha',.7);
     title(itFields{k})
+
 end
 
-for k = 1:length(dtHistoY)
+% for k = 1:length(dtHistoY)
+for kk = 1 : length(dtSorting)
+    k = dtSorting(kk);
     
     currFeat = mean(dtHistoY{k});
     f1 = currFeat(1:size(dtHistoY{k},2)/2);
     f2 = currFeat(size(dtHistoY{k},2)/2+1:end);
     
-    subplot(3,7,k+7)
+    subplot(2,6,kk+6)
     bar(dtHistoX{k},f1,colors{1},'facealpha',.7)
     hold on; bar(dtHistoX{k},f2,colors{2},'r','facealpha',.7);
     title(dtFields{k})

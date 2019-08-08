@@ -1,4 +1,4 @@
-function dt = duringTouchBuilder(behavioralStruct,wfa,whiskDir,touchOrder)
+function dt = duringTouchBuilder(behavioralStruct,wfa,whiskDir,touchOrder,decisionPoint)
 
 %whiskDir can be protraction or ALL
 if strcmp(whiskDir,'protraction')
@@ -24,7 +24,7 @@ end
 
 
 %during touch features - predecision mask
-pdm = predecision_mask(behavioralStruct,wfa);
+pdm = predecision_mask(behavioralStruct,wfa,decisionPoint);
 touchOnsetFrame = cellfun(@(y) cellfun(@(x)  x(1) ,y.(tfchunks)),wfa.trials,'uniformoutput',false);
 firstDIdx = cell(1,size(touchOnsetFrame,2));
 for i = 1:numel(touchOnsetFrame)
@@ -61,9 +61,6 @@ end
 
 
 %during touch features
-dt.features.touchDuration = cellfun(@(x) x.(selTDur), wfa.trials, 'uniformoutput', false);
-
-dt.features.maxSlideDistance = cellfun(@(y) cellfun(@max, y.(selTSlide)), wfa.trials, 'uniformoutput', false);
 
 dt.features.maxDtheta = cellfun(@(y) cellfun(@(x) y.theta(x(find(abs(y.theta(x) - y.theta(x(1))) == max(abs(y.theta(x) - y.theta(x(1)))) ) ) ) - y.theta(x(1)), ...
     y.(tfchunks)), wfa.trials, 'uniformoutput', false); % max DeltaTheta from touchOnset Theta
@@ -77,15 +74,21 @@ dt.features.maxDkappaH = cellfun(@(y) cellfun(@(x) y.kappaH(x(find( max(abs(y.ka
 dt.features.maxDkappaV = cellfun(@(y) cellfun(@(x) y.kappaV(x(find( max(abs(y.kappaV(x)-y.kappaV(x(1)))) == abs(y.kappaV(x)-y.kappaV(x(1))),1,'first'))) -y.kappaV(x(1))  , ...
     y.(tfchunks)), wfa.trials, 'uniformoutput', false); %FRONT VIEW max kappaV in touch window
 
+dt.features.maxSlideDistance = cellfun(@(y) cellfun(@max, y.(selTSlide)), wfa.trials, 'uniformoutput', false);
 
-dt.features.maxDkappaVidxHratio = cellfun(@(y) cellfun(@(x) ( y.kappaV(x(find(max(abs(y.kappaV(x)-y.kappaV(x(1)))) == abs(y.kappaV(x)-y.kappaV(x(1))),1,'first')))-y.kappaV(x(1))) ./ (y.kappaH(x(find( max(abs(y.kappaV(x)-y.kappaV(x(1)))) == abs(y.kappaV(x)-y.kappaV(x(1))),1,'first'))) - y.kappaH(x(1))) , ...
-    y.(tfchunks)), wfa.trials, 'uniformoutput', false); %Max FRONTVIEW kap ./ TOPVIEW kap at that kapVIDX
-dt.features.maxDkappaVHidxratio = cellfun(@(y) cellfun(@(x) ( y.kappaV(x(find( max(abs(y.kappaH(x)-y.kappaH(x(1)))) == abs(y.kappaH(x)-y.kappaH(x(1))),1,'first')))-y.kappaV(x(1))) ./ (y.kappaH(x(find( max(abs(y.kappaH(x)-y.kappaH(x(1)))) == abs(y.kappaH(x)-y.kappaH(x(1))),1,'first'))) - y.kappaH(x(1))) , ...
-    y.(tfchunks)), wfa.trials, 'uniformoutput', false); %Max FRONTVIEW kap ./ TOPVIEW kap at that kapHIDX
-dt.features.maxDphiIdxThetaratio = cellfun(@(y) cellfun(@(x) ( y.phi(x(find( max(abs(y.phi(x)-y.phi(x(1)))) == abs(y.phi(x)-y.phi(x(1))),1,'first')))-y.phi(x(1))) ./ (y.theta(x(find( max(abs(y.phi(x)-y.phi(x(1)))) == abs(y.phi(x)-y.phi(x(1))),1,'first'))) - y.theta(x(1))) , ...
-    y.(tfchunks)), wfa.trials, 'uniformoutput', false); % phiThetaRatio at max phiIdx
-dt.features.maxDphiThetaIdxratio = cellfun(@(y) cellfun(@(x) ( y.phi(x(find( max(abs(y.theta(x)-y.theta(x(1)))) == abs(y.theta(x)-y.theta(x(1))),1,'first')))-y.phi(x(1))) ./ (y.theta(x(find( max(abs(y.theta(x)-y.theta(x(1)))) == abs(y.theta(x)-y.theta(x(1))),1,'first'))) - y.theta(x(1))) , ...
-    y.(tfchunks)), wfa.trials, 'uniformoutput', false); % phiThetaRatio at max thetaIdx
+dt.features.touchDuration = cellfun(@(x) x.(selTDur), wfa.trials, 'uniformoutput', false);
+
+
+
+
+% dt.features.maxDkappaVidxHratio = cellfun(@(y) cellfun(@(x) ( y.kappaV(x(find(max(abs(y.kappaV(x)-y.kappaV(x(1)))) == abs(y.kappaV(x)-y.kappaV(x(1))),1,'first')))-y.kappaV(x(1))) ./ (y.kappaH(x(find( max(abs(y.kappaV(x)-y.kappaV(x(1)))) == abs(y.kappaV(x)-y.kappaV(x(1))),1,'first'))) - y.kappaH(x(1))) , ...
+%     y.(tfchunks)), wfa.trials, 'uniformoutput', false); %Max FRONTVIEW kap ./ TOPVIEW kap at that kapVIDX
+% dt.features.maxDkappaVHidxratio = cellfun(@(y) cellfun(@(x) ( y.kappaV(x(find( max(abs(y.kappaH(x)-y.kappaH(x(1)))) == abs(y.kappaH(x)-y.kappaH(x(1))),1,'first')))-y.kappaV(x(1))) ./ (y.kappaH(x(find( max(abs(y.kappaH(x)-y.kappaH(x(1)))) == abs(y.kappaH(x)-y.kappaH(x(1))),1,'first'))) - y.kappaH(x(1))) , ...
+%     y.(tfchunks)), wfa.trials, 'uniformoutput', false); %Max FRONTVIEW kap ./ TOPVIEW kap at that kapHIDX
+% dt.features.maxDphiIdxThetaratio = cellfun(@(y) cellfun(@(x) ( y.phi(x(find( max(abs(y.phi(x)-y.phi(x(1)))) == abs(y.phi(x)-y.phi(x(1))),1,'first')))-y.phi(x(1))) ./ (y.theta(x(find( max(abs(y.phi(x)-y.phi(x(1)))) == abs(y.phi(x)-y.phi(x(1))),1,'first'))) - y.theta(x(1))) , ...
+%     y.(tfchunks)), wfa.trials, 'uniformoutput', false); % phiThetaRatio at max phiIdx
+% dt.features.maxDphiThetaIdxratio = cellfun(@(y) cellfun(@(x) ( y.phi(x(find( max(abs(y.theta(x)-y.theta(x(1)))) == abs(y.theta(x)-y.theta(x(1))),1,'first')))-y.phi(x(1))) ./ (y.theta(x(find( max(abs(y.theta(x)-y.theta(x(1)))) == abs(y.theta(x)-y.theta(x(1))),1,'first'))) - y.theta(x(1))) , ...
+%     y.(tfchunks)), wfa.trials, 'uniformoutput', false); % phiThetaRatio at max thetaIdx
 
 
 % FOR CHECKING kappaH @ maxV idx and filtering
@@ -98,14 +101,14 @@ dt.features.maxDphiThetaIdxratio = cellfun(@(y) cellfun(@(x) ( y.phi(x(find( max
 
 
 %INDEX of MAXABS = find(abs(y.phi(x)-y.phi(x(1)))==max(abs(y.phi(x)-y.phi(x(1)))))
-dt.features.maxDphiDuration = cellfun(@(y) cellfun(@(x) (y.phi( x(find(abs(y.phi(x)-y.phi(x(1)))==max(abs(y.phi(x)-y.phi(x(1))))) )) - y.phi(x(1)) ) ./ find(abs(y.phi(x)-y.phi(x(1)))==max(abs(y.phi(x)-y.phi(x(1))))), ...
-    y.(tfchunks)), wfa.trials,'uniformoutput',false);
+% dt.features.maxDphiDuration = cellfun(@(y) cellfun(@(x) (y.phi( x(find(abs(y.phi(x)-y.phi(x(1)))==max(abs(y.phi(x)-y.phi(x(1))))) )) - y.phi(x(1)) ) ./ find(abs(y.phi(x)-y.phi(x(1)))==max(abs(y.phi(x)-y.phi(x(1))))), ...
+%     y.(tfchunks)), wfa.trials,'uniformoutput',false);
 
-dt.features.maxDkappaVDuration = cellfun(@(y) cellfun(@(x) (y.kappaV( x(find(abs(y.kappaV(x)-y.kappaV(x(1)))==max(abs(y.kappaV(x)-y.kappaV(x(1)))),1,'first') )) - y.kappaV(x(1)) ) ./ find(abs(y.kappaV(x)-y.kappaV(x(1)))==max(abs(y.kappaV(x)-y.kappaV(x(1)))),1,...
-'first'),y.(tfchunks)), wfa.trials,'uniformoutput',false);
+% dt.features.maxDkappaVDuration = cellfun(@(y) cellfun(@(x) (y.kappaV( x(find(abs(y.kappaV(x)-y.kappaV(x(1)))==max(abs(y.kappaV(x)-y.kappaV(x(1)))),1,'first') )) - y.kappaV(x(1)) ) ./ find(abs(y.kappaV(x)-y.kappaV(x(1)))==max(abs(y.kappaV(x)-y.kappaV(x(1)))),1,...
+% 'first'),y.(tfchunks)), wfa.trials,'uniformoutput',false);
 
-dt.features.maxDphiDistance = cellfun(@(y) cellfun(@(x,z) (y.phi( x(find(abs(y.phi(x)-y.phi(x(1)))==max(abs(y.phi(x)-y.phi(x(1))))) )) - y.phi(x(1)) ) ./ z(find(abs(y.phi(x)-y.phi(x(1)))==max(abs(y.phi(x)-y.phi(x(1)))))) , ...
-    y.(tfchunks),y.(selTSlide)), wfa.trials,'uniformoutput',false);
+% dt.features.maxDphiDistance = cellfun(@(y) cellfun(@(x,z) (y.phi( x(find(abs(y.phi(x)-y.phi(x(1)))==max(abs(y.phi(x)-y.phi(x(1))))) )) - y.phi(x(1)) ) ./ z(find(abs(y.phi(x)-y.phi(x(1)))==max(abs(y.phi(x)-y.phi(x(1)))))) , ...
+%     y.(tfchunks),y.(selTSlide)), wfa.trials,'uniformoutput',false);
 
-dt.features.maxDkappaVDistance = cellfun(@(y) cellfun(@(x,z) (y.kappaV( x(find(abs(y.kappaV(x)-y.kappaV(x(1)))==max(abs(y.kappaV(x)-y.kappaV(x(1)))),1,'first') )) - y.kappaV(x(1)) ) ./ z(find(abs(y.kappaV(x)-y.kappaV(x(1)))==max(abs(y.kappaV(x)-y.kappaV(x(1)))),1,'first')) , ...
-    y.(tfchunks),y.(selTSlide)), wfa.trials,'uniformoutput',false);
+% dt.features.maxDkappaVDistance = cellfun(@(y) cellfun(@(x,z) (y.kappaV( x(find(abs(y.kappaV(x)-y.kappaV(x(1)))==max(abs(y.kappaV(x)-y.kappaV(x(1)))),1,'first') )) - y.kappaV(x(1)) ) ./ z(find(abs(y.kappaV(x)-y.kappaV(x(1)))==max(abs(y.kappaV(x)-y.kappaV(x(1)))),1,'first')) , ...
+%     y.(tfchunks),y.(selTSlide)), wfa.trials,'uniformoutput',false);

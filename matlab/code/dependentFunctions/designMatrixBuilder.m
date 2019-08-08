@@ -1,6 +1,6 @@
-function [DmatXIT, DmatXDT, tnums, fieldsList] = designMatrixBuilder(it,dt,Xhow)
+function [DmatXDT, DmatXIT, tnums, fieldsList] = designMatrixBuilder(it,dt,Xhow)
 
-if strcmp(Xhow,'mean')
+if strcmpi(Xhow,'mean')
     %% Design matrix for mean of all touches
     %Design matrix AT TOUCH
     featTitles = fields(it);
@@ -28,20 +28,21 @@ if strcmp(Xhow,'mean')
         DmatXDT(:,b) = pdfeat;
     end
     
-    fieldsList = [featTitles;allF];
+    fieldsList = [allF;featTitles];
     tnums = 1:length(DmatXIT);
     
-elseif strcmp(Xhow,'individual')
+elseif strcmpi(Xhow,'individual')
     %% Design matrix for individual touches
     %Design matrix AT TOUCH\
     featTitles = fields(it);
     DmatXIT = [];
-    idx2Keep =  find(~isnan(it.touchTheta .* it.touchKappaH .* it.touchKappaV .* it.touchKappaVH .* it.touchPhi));
+%     idx2Keep =  find(~isnan(it.touchTheta .* it.touchKappaH .* it.touchKappaV .* it.touchKappaVH .* it.touchPhi));
+    idx2Keep =  find(~isnan(it.touchTheta .* it.touchKappaH .* it.touchKappaV .* it.touchPhi));
     tnumsIT = ceil(idx2Keep ./ 5000);
     for b = 1:length(featTitles)
-        if b == 7
+        if b == 6
             DmatXIT(:,b) = nan(length(tnumsIT),1);
-        elseif b ==6 %Index up because of radial distance at touch 
+        elseif b ==5 %Index up because of radial distance at touch 
             DmatXIT(:,b) = it.(featTitles{b})(idx2Keep+1);
         else
             DmatXIT(:,b) = it.(featTitles{b})(idx2Keep);
@@ -76,6 +77,16 @@ elseif strcmp(Xhow,'individual')
         DmatXDT(:,b) = pdfeat;
     end
     
+    % first, find tnums that are both in DT and IT (sometimes it is 1 vs 0)
+    tempuDT = unique(tnumsDT(:,1));
+    tempuIT = unique(tnumsIT);
+    uT = intersect(tempuDT, tempuIT);
+    tempTossDT = find(1-ismember(tnumsDT(:,1), uT));
+    tempTossIT = find(1-ismember(tnumsIT, uT));
+    tnumsDT(tempTossDT,:) = [];
+    tnumsIT(tempTossIT) = [];
+    DmatXDT(tempTossDT,:) = [];
+    DmatXIT(tempTossIT,:) = [];
     
     [uDT,~,c] = unique(tnumsDT(:,1));
     tmpDT = accumarray(c,1);
@@ -99,7 +110,7 @@ elseif strcmp(Xhow,'individual')
         error('misalignment between tnums of IT and DT')
     end
     
-    fieldsList = [featTitles;allF];
+    fieldsList = [allF;featTitles];
     tnums = tnumsIT(:,1);
     
 else

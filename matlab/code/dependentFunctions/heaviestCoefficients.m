@@ -9,7 +9,7 @@ tmpWt = abs(mean(groupMdl{b}.fitCoeffs(2:end,:),2));
 populationWt(:,b) = tmpWt./sum(tmpWt);
 end
 
-[wt,idx] = sort(mean(populationWt,2));
+[wt,idx] = sort(nanmean(populationWt,2));
 err = std(populationWt,[],2)./sqrt(size(populationWt,2)); 
 topFeats = flipud(groupMdl{1}.fitCoeffsFields(idx));
 

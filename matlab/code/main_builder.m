@@ -1,28 +1,42 @@
 %% Define mouse, session numbers, and model building parameters
-clear
+% clear
+
 
 mns = [{'JK025'},{'JK027'},{'JK030'},{'JK036'},{'JK039'},{'JK052'}];
+% mns = [{'JK025'},{'JK027'},{'JK030'},{'JK036'},{'JK037'},{'JK038'},{'JK039'},{'JK041'},{'JK052'},{'JK053'},{'JK054'},{'JK056'}];
 
-% sns = [{'S05'},{'S02'},{'S04'},{'S02'},{'S02'},{'S05'}]; %naive
+sns = [{'S05'},{'S02'},{'S04'},{'S02'},{'S02'},{'S05'}]; %naive
 % sns = [{'S18'},{'S07'},{'S20'},{'S16'},{'S21'},{'S20'}]; %expert
 % sns = [{'S04'},{'S03'},{'S03'},{'S01'},{'S01'},{'S03'}]; %naive discreteAngles
-sns = [{'S19'},{'S16'},{'S21'},{'S17'},{'S23'},{'S25'}]; %expert discreteAngles
+% sns = [{'S19'},{'S10'},{'S21'},{'S17'},{'S23'},{'S21'}]; %expert discreteAngles
 % sns = [{'S22'},{'S14'},{'S22'},{'S18'},{'S24'},{'S26'}]; %radial distance
 
-mdlName = 'mdlDiscreteIndivTouch';
+mdlName = 'mdlTwoNaiveTouch_12features_answer';
 whiskDir = 'protraction'; % 'protraction' or 'all' to choose which touches to use
 touchOrder = 'all'; % 'first' or 'all' to choose which touches pre-decision
-yOut = 'discrete'; % can be 'ttype' (45 vs 135), 'discrete' (45:15:135) or 'choice' (lick right probability)
-Xhow = 'individual'; %can be 'mean' or 'individual' so each touch is counted 
+decisionPoint = 'answer'; % 'answer' or 'lick', added 2019/07/29 JK, for using touches before the first lick (within
+% the answer period) or the answer lick
+yOut = 'ttype'; % can be 'ttype' (45 vs 135), 'discrete' (45:15:135) or 'choice' (lick right probability)
+Xhow = 'mean'; %can be 'mean' or 'individual' so each touch is counted 
 
+info.mice = mns;
+info.sessions = sns;
+info.whiskDir = whiskDir;
+info.touchOrder = touchOrder;
+info.decisionPoint = decisionPoint;
+info.yOut = yOut;
+info.Xhow = Xhow;
 
 groupMdl = cell(length(mns),1); 
-
+    
 if strcmp(touchOrder,'first') || strcmp(Xhow,'individual')
-    DmatSelect = [1:6 8:17]; %tossing touch counts since it is all ones
+    DmatSelect = [1:5, 7:12]; %tossing touch counts since it is all ones
 else
-    DmatSelect = [1:17]; %feats from 1:21
+    DmatSelect = 1:12; %feats from 1:12
 end
+
+% DmatSelect = [8:13];
+
 % GLM model parameters
 glmnetOpt = glmnetSet;
 glmnetOpt.standardize = 0; %set to 0 b/c already standardized
@@ -34,15 +48,16 @@ saveDir = 'C:\Users\shires\Documents\GitHub\AngleDiscrimBehavior\matlab\datastru
 
 %%
 for d = 1:length(sns)
+% for d = 5
     mouseNumber = mns{d};
     sessionNumber = sns{d};
     
     %% Load necessary files
-    behaviorFolder = 'E:\SoloData';
+    behaviorFolder = 'Y:\Whiskernas\JK\SoloData';
     cd([behaviorFolder filesep mouseNumber]);
     load(['behavior_' mouseNumber '.mat']);
     
-    whiskerFolder = ['E:\WhiskerVideo' filesep mouseNumber sessionNumber];
+    whiskerFolder = ['Y:\Whiskernas\JK\whisker\tracked' filesep mouseNumber sessionNumber];
     
     bSessionNums = cellfun(@(x) x.sessionName, b,'uniformoutput',false);
 
@@ -56,19 +71,19 @@ for d = 1:length(sns)
     outcomes.sessionNumber = sessionNumber;
     outcomes.mouseNumber = mouseNumber;
     %% Touch feature builder
-    %instantaneous touch features
-     it = instantTouchBuilder(behavioralStruct,wfa,whiskDir,touchOrder);
     %during touch features
-     dt = duringTouchBuilder(behavioralStruct,wfa,whiskDir,touchOrder);
+     dt = duringTouchBuilder(behavioralStruct,wfa,whiskDir,touchOrder,decisionPoint);
+    %instantaneous touch features
+     it = instantTouchBuilder(behavioralStruct,wfa,whiskDir,touchOrder,decisionPoint);
     
     %% Plotting of instantaneous and during touch features
     %can set 'yOut' to build feature distribution based on 'ttype' or 'choice'
 %     featurePlotter(it,dt,outcomes,yOut)
     
     %% Design matrix construction
-    [DmatXIT, DmatXDT, tnums, fieldsList] = designMatrixBuilder(it,dt,Xhow);
+    [DmatXDT, DmatXIT, tnums, fieldsList] = designMatrixBuilder(it,dt,Xhow);
 
-    DmatX = [DmatXIT DmatXDT];
+    DmatX = [DmatXDT DmatXIT];
 
     DmatX = DmatX(:,DmatSelect);
     fieldsList = fieldsList(DmatSelect);
@@ -131,8 +146,7 @@ for d = 1:length(sns)
         groupMdl{d} = mdl;
 
     end
-    
-    save([saveDir mdlName],'groupMdl')
+
 end
-
-
+save([saveDir mdlName],'groupMdl', 'info')
+cd(saveDir)

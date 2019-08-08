@@ -1,4 +1,4 @@
-function lickMask = predecision_mask(currBMat,wfa)
+function lickMask = predecision_mask(currBMat,wfa, decisionPoint)
 %% build preDecision mask
 % predecision is defined as time before first lick after answer period
 % opening
@@ -22,31 +22,52 @@ decisionLick = nan(length(numTrialsIndB),1);
 PoleOnsetTime = zeros(length(numTrialsIndB),1); 
 AnswerPeriodOpening = PoleOnsetTime;
 
-for i = 1:length(numTrialsIndB)
-    
-    timeW = wfa.trials{numTrialsIndW(i)}.time;
-    pOnsetTime = currBMat.trials{numTrialsIndB(i)}.poleUpOnsetTime;
-    answerTime = currBMat.trials{numTrialsIndB(i)}.answerPeriodTime(1);
-    [~, PoleOnsetTime(i)] = min(abs(timeW-pOnsetTime));
-    [~, AnswerPeriodOpening(i)] = min(abs(timeW-answerTime)); 
-    
-    
-    bbt = currBMat.trials{numTrialsIndB(i)}.beamBreakTimes ;
-    postAnswerLickFrames = bbt(bbt>answerTime);
-    
-    if ~isempty(postAnswerLickFrames)
-          [~,decisionLick(i)] = min(abs(timeW-min(postAnswerLickFrames)));        
+if strcmpi(decisionPoint, 'answer')
+    for i = 1:length(numTrialsIndB)
+
+        timeW = wfa.trials{numTrialsIndW(i)}.time;
+        pOnsetTime = currBMat.trials{numTrialsIndB(i)}.poleUpOnsetTime;
+        answerTime = currBMat.trials{numTrialsIndB(i)}.answerPeriodTime(1);
+        [~, PoleOnsetTime(i)] = min(abs(timeW-pOnsetTime));
+        [~, AnswerPeriodOpening(i)] = min(abs(timeW-answerTime)); 
+
+
+        bbt = currBMat.trials{numTrialsIndB(i)}.beamBreakTimes ;
+        postAnswerLickFrames = bbt(bbt>answerTime);
+
+        if ~isempty(postAnswerLickFrames)
+              [~,decisionLick(i)] = min(abs(timeW-min(postAnswerLickFrames)));        
+        end
+    % 
+    %     hold on; scatter(bbtInFrames,ones(length(bbtInFrames),1)*i,5,'m','filled')
     end
-% 
-%     hold on; scatter(bbtInFrames,ones(length(bbtInFrames),1)*i,5,'m','filled')
+elseif strcmpi(decisionPoint, 'lick')
+    for i = 1:length(numTrialsIndB)
+
+        timeW = wfa.trials{numTrialsIndW(i)}.time;
+        pOnsetTime = currBMat.trials{numTrialsIndB(i)}.poleUpOnsetTime;
+        answerTime = currBMat.trials{numTrialsIndB(i)}.answerPeriodTime(1);
+        [~, PoleOnsetTime(i)] = min(abs(timeW-pOnsetTime));
+        [~, AnswerPeriodOpening(i)] = min(abs(timeW-answerTime)); 
+
+
+        bbt = currBMat.trials{numTrialsIndB(i)}.beamBreakTimes ;
+        postAnswerLickFrames = bbt(bbt>pOnsetTime);
+
+        if ~isempty(postAnswerLickFrames)
+              [~,decisionLick(i)] = min(abs(timeW-min(postAnswerLickFrames)));        
+        end
+    % 
+    %     hold on; scatter(bbtInFrames,ones(length(bbtInFrames),1)*i,5,'m','filled')
+    end
+else
+    error('Specify decisionPoint with either ''answer'' or ''lick''.')
 end
-
-
 
 %Fill trials w/ no answer licks with median decision lick time. This lets
 %us look at features before "decisoin" to see what influenced mice to
 %lick/notlick
-decisionLick(isnan(decisionLick)) = nanmedian(decisionLick);
+decisionLick(isnan(decisionLick)) = round(nanmedian(decisionLick));
 
 %Building a lick mask of 1s and NaNs. This'll be useful to find which
 %preDecision features are gathered

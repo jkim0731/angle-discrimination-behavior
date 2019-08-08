@@ -2,29 +2,30 @@ function mdl = multinomialModel(mdl,DmatX,DmatY,glmnetOpt)
 
     mdl.fitCoeffs = cell(1,glmnetOpt.numIterations);
     mdl.gof.confusionMatrix = zeros(numel(unique(DmatY)));
-    
+    trainIdx = cell(glmnetOpt.numIterations,1);
+    testIdx = cell(glmnetOpt.numIterations,1);
     for h = 1:glmnetOpt.numIterations
         display(['running multinomial model iteration ' num2str(h) '/' num2str(glmnetOpt.numIterations)])
         
         %% stratified distribution of classes for test and train sets
         diffClasses = unique(DmatY);
         
-        trainIdx = [];
-        testIdx = [];
+        trainIdx{h} = [];
+        testIdx{h} = [];
         for i = 1:length(diffClasses)
             classIdx = find(DmatY == diffClasses(i));
             shuffCI = classIdx(randperm(length(classIdx)));
             seventy = 1:round(numel(classIdx)*.7);
             thirty  = round(numel(classIdx)*.7)+1:length(classIdx);
             
-            trainIdx = [trainIdx ; shuffCI(seventy)];
-            testIdx = [testIdx; shuffCI(thirty)];
+            trainIdx{h} = [trainIdx{h} ; shuffCI(seventy)];
+            testIdx{h} = [testIdx{h}; shuffCI(thirty)];
         end
         
-        trainDmatX = DmatX(trainIdx,:);
-        trainDmatY = DmatY(trainIdx,:);
-        testDmatX = DmatX(testIdx,:);
-        testDmatY = DmatY(testIdx,:);
+        trainDmatX = DmatX(trainIdx{h},:);
+        trainDmatY = DmatY(trainIdx{h},:);
+        testDmatX = DmatX(testIdx{h},:);
+        testDmatY = DmatY(testIdx{h},:);
         
       
         
@@ -50,3 +51,5 @@ function mdl = multinomialModel(mdl,DmatX,DmatY,glmnetOpt)
         mdl.gof.modelAccuracy(h) = mean(true == (pred));
 
     end
+    mdl.trainIdx = trainIdx;
+    mdl.testIdx = testIdx;

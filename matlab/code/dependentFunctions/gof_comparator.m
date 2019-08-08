@@ -13,11 +13,13 @@ end
 
 figure;plot(gof,'ko-')
 if numel(mdlName)==6
-    set(gca,'xtick',[1:length(mdlName)],'xticklabel',{'3','2','1','2+1','3+2+1','full'},'xlim',[.5 length(mdlName)+.5])
+    set(gca,'xtick',[1:length(mdlName)],'xticklabel',{'3','2','1','2+1','3+2+1','full'},'xlim',[.5 length(mdlName)+.5], 'xticklabelrotation', 45)
 elseif numel(mdlName)==8
-    set(gca,'xtick',[1:length(mdlName)],'xticklabel',{'4','3','2','1','2+1','3+2+1','4+3+2+1','full'},'xlim',[.5 length(mdlName)+.5])
+    set(gca,'xtick',[1:length(mdlName)],'xticklabel',{'4','3','2','1','2+1','3+2+1','4+3+2+1','full'},'xlim',[.5 length(mdlName)+.5], 'xticklabelrotation', 45)
+elseif numel(mdlName)==10
+    set(gca,'xtick',[1:length(mdlName)],'xticklabel',{'5','4','3','2','1','2+1','3+2+1','4+3+2+1','5+4+3+2+1','full'},'xlim',[.5 length(mdlName)+.5], 'xticklabelrotation', 45)
 else 
-    set(gca,'xtick',[1:length(mdlName)],'xticklabel',mdlName,'xlim',[.5 length(mdlName)+.5])
+    set(gca,'xtick',[1:length(mdlName)],'xticklabel',mdlName,'xlim',[.5 length(mdlName)+.5], 'xticklabelrotation', 45)
 end
 if strcmp(gofType,'mcc')
     set(gca,'ylim',[-.2 1],'ytick',0:.25:1)
@@ -29,5 +31,4 @@ elseif strcmp(gofType,'modelAccuracy')
     hold on; plot([.5 length(mdlName)+.5],[chance chance],'-.k')
 end
 
-ylabel('gof metric')
-
+ylabel(gofType)
